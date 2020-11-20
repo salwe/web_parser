@@ -27,9 +27,10 @@ pixelRouter.get(`${prefix}/commissions/new`, async (req, res) => {
             }
             const storedIds = commissions.map(el => el.id);
             const newCommissions = actualCommissions.filter(el => !storedIds.includes(el.id));
+            const idsToDelete = storedIds.filter(el => !actualIds.includes(el.id));
 
-            if (newCommissions.length) {
-                await Commissions.deleteMany({});
+            if (newCommissions.length || idsToDelete.length) {
+                await Commissions.deleteMany({id: {$in: idsToDelete}});
                 await Commissions.create(actualCommissions);
             }
 
@@ -63,9 +64,10 @@ pixelRouter.get(`${prefix}/sales/new`, async (req, res) => {
             }
             const storedTitles = sales.map(el => el.title);
             const newSales = actualSales.filter(el => !storedTitles.includes(el.title));
+            const titlesToDelete = storedTitles.filter(el => !storedTitles.includes(el.title));
 
-            if (newSales.length) {
-                await Sales.deleteMany({});
+            if (newSales.length || titlesToDelete.length) {
+                await Sales.deleteMany({title: {$in: titlesToDelete}});
                 await Sales.create(actualSales);
             }
 
